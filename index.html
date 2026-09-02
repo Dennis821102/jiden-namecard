@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>電子名片 - 黃偉哲｜傑登汽車大樓隔熱紙</title>
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink: #0A0A0A;
+      --ink-soft: #141414;
+      --card: #121212;
+      --line: #2E2A20;
+      --gold: #E5B027;
+      --gold-lt: #F5D66B;
+      --gold-dk: #8A6A12;
+      --text: #F2EFE6;
+      --text-dim: #9A9384;
+    }
+
+    body {
+      font-family: "PingFang TC", "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(120% 80% at 50% -10%, #1E1A10 0%, rgba(10,10,10,0) 60%),
+        var(--ink);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 20px 48px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 360px;
+      background: linear-gradient(180deg, var(--card) 0%, #0D0D0D 100%);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+    }
+
+    /* 品牌條 */
+    .brandbar {
+      background: #000;
+      padding: 22px 24px 18px;
+      text-align: center;
+      border-bottom: 1px solid var(--line);
+    }
+    .brandbar img { width: 190px; max-width: 72%; display: block; margin: 0 auto; }
+    .brandbar .en {
+      margin-top: 10px;
+      font-size: 10px;
+      letter-spacing: 0.34em;
+      color: var(--gold-dk);
+      text-indent: 0.34em;
+    }
+
+    /* 人像 */
+    .portrait-wrap { padding: 28px 24px 0; text-align: center; }
+    .portrait {
+      width: 116px; height: 116px;
+      margin: 0 auto;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(145deg, var(--gold-lt), var(--gold-dk));
+    }
+    .portrait > * {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: flex; align-items: center; justify-content: center;
+      background: #000;
+      color: var(--gold);
+      font-size: 40px; font-weight: 700; letter-spacing: 0.06em;
+    }
+
+    .name {
+      margin-top: 18px;
+      font-size: 30px; font-weight: 700; letter-spacing: 0.12em;
+      text-indent: 0.12em;
+    }
+    .title {
+      margin-top: 8px;
+      font-size: 14px; color: var(--text-dim); letter-spacing: 0.06em;
+    }
+
+    .rule {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin: 18px 24px 0;
+    }
+    .rule span { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dk), transparent); }
+    .rule i { width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); }
+
+    .company {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 15px; font-weight: 700; color: var(--gold); letter-spacing: 0.08em;
+    }
+    .company small {
+      display: block; margin-top: 6px;
+      font-size: 11px; font-weight: 400; color: var(--text-dim); letter-spacing: 0.02em;
+    }
+
+    /* 資訊列 */
+    .info { padding: 20px 24px 4px; }
+    .info-row {
+      display: flex; align-items: baseline; gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px dashed rgba(138,106,18,0.28);
+      font-size: 14px;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row b { color: var(--gold-dk); font-weight: 600; font-size: 11px; letter-spacing: 0.16em; min-width: 42px; }
+    .info-row span { color: var(--text); }
+
+    /* 按鈕 */
+    .actions { padding: 16px 24px 26px; display: flex; flex-direction: column; gap: 10px; }
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--gold-dk);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text);
+      font-size: 15px; font-weight: 600; letter-spacing: 0.04em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .18s, border-color .18s, color .18s;
+    }
+    .btn:hover { background: rgba(229,176,39,0.10); border-color: var(--gold); }
+    .btn .ico { font-size: 15px; opacity: .9; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      border-color: var(--gold-lt);
+      color: #1A1206;
+      font-size: 16px; font-weight: 700;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(229,176,39,0.22);
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, #FFE28A, var(--gold-lt)); }
+    .btn-primary:disabled { background: #26241E; border-color: #26241E; color: #6B6558; box-shadow: none; cursor: not-allowed; }
+
+    .status {
+      max-width: 360px; width: 100%;
+      margin-top: 14px;
+      font-size: 13px; color: var(--text-dim); text-align: center; min-height: 20px;
+    }
+    .status.error { color: #E0603F; }
+    .status.success { color: #7FBF6A; }
+
+    .foot {
+      margin-top: 22px;
+      font-size: 10px; letter-spacing: 0.28em; color: #4A463C; text-indent: 0.28em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="brandbar">
+      <img src="img/logo.png" alt="傑登汽車大樓隔熱紙">
+      <div class="en">JIDEN WINDOW FILM</div>
+    </div>
+
+    <div class="portrait-wrap">
+      <div class="portrait"><div id="portrait">黃</div></div>
+      <div class="name">黃偉哲</div>
+      <div class="title">傑登汽車大樓隔熱紙</div>
+    </div>
+
+    <div class="rule"><span></span><i></i><span></span></div>
+
+    <div class="company">
+      隔熱紙專業施工．北部服務
+      <small>汽車隔熱紙／大樓住宅隔熱紙／商辦玻璃工程</small>
+    </div>
+
+    <div class="info">
+      <div class="info-row"><b>手機</b><span>0958-588-678</span></div>
+      <div class="info-row"><b>市話</b><span>03-322-3585</span></div>
+      <div class="info-row"><b>LINE</b><span>@jiden</span></div>
+      <div class="info-row"><b>門市</b><span>桃園市蘆竹區中正路 14 號（肯德基旁）</span></div>
+    </div>
+
+    <div class="actions">
+      <a class="btn" href="tel:0958588678"><span class="ico">📞</span>立即致電</a>
+      <a class="btn" href="https://line.me/ti/p/@jiden" target="_blank" rel="noopener"><span class="ico">💬</span>加入 LINE 好友</a>
+      <a class="btn" href="https://www.jiden.com.tw/" target="_blank" rel="noopener"><span class="ico">🌐</span>傑登官方網站</a>
+      <a class="btn" href="https://www.facebook.com/jiden3223585/" target="_blank" rel="noopener"><span class="ico">👍</span>Facebook 粉絲專頁</a>
+      <a class="btn" href="https://www.tiktok.com/@jiden3223585" target="_blank" rel="noopener"><span class="ico">🎬</span>TikTok 影音頻道</a>
+      <a class="btn" href="https://goo.gl/maps/krXDY48M5kM4hsaa8" target="_blank" rel="noopener"><span class="ico">📍</span>門市導航｜蘆竹一店</a>
+      <button class="btn btn-primary" id="btnShare" disabled>載入中...</button>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+  <div class="foot">JIDEN WINDOW FILM</div>
+
+  <script>
+    // =============================================
+    // 設定區：LIFF ID 到 LINE Developers 建好後填這裡
+    // =============================================
+    const LIFF_ID = 'YOUR_LIFF_ID';
+
+    // Flex Message 的圖片必須是 https 絕對網址，
+    // 這裡指向本專案的 GitHub Pages；換帳號或改 repo 名時只改這一行。
+    const BASE = 'https://dennis821102.github.io/jiden-namecard';
+
+    const LINKS = {
+      tel:      'tel:0958588678',
+      telShop:  'tel:0333223585',
+      line:     'https://line.me/ti/p/@jiden',
+      web:      'https://www.jiden.com.tw/',
+      fb:       'https://www.facebook.com/jiden3223585/',
+      tiktok:   'https://www.tiktok.com/@jiden3223585',
+      map:      'https://goo.gl/maps/krXDY48M5kM4hsaa8'
+    };
+
+    const GOLD = '#E5B027';
+    const GOLD_DK = '#8A6A12';
+    const INK = '#0A0A0A';
+    const CARD = '#121212';
+
+    // 共用：底部按鈕
+    // LINE Flex 的按鈕文字色是固定的：primary 白字、secondary 深字，
+    // 所以主鈕用深金底配白字，次鈕用米白底配深字（對比才夠）。
+    function btn(label, uri, primary) {
+      return {
+        type: 'button',
+        style: primary ? 'primary' : 'secondary',
+        height: 'sm',
+        color: primary ? '#9A7514' : '#EFE9DC',
+        action: { type: 'uri', label: label, uri: uri }
+      };
+    }
+
+    function infoRow(label, value) {
+      return {
+        type: 'box',
+        layout: 'baseline',
+        spacing: 'sm',
+        contents: [
+          { type: 'text', text: label, size: 'xxs', color: GOLD_DK, flex: 2, weight: 'bold' },
+          { type: 'text', text: value, size: 'sm', color: '#EDEAE1', flex: 7, wrap: true }
+        ]
+      };
+    }
+
+    function bullet(text) {
+      return {
+        type: 'box',
+        layout: 'baseline',
+        spacing: 'sm',
+        contents: [
+          { type: 'text', text: '◆', size: 'xxs', color: GOLD, flex: 1 },
+          { type: 'text', text: text, size: 'sm', color: '#D9D5CA', flex: 12, wrap: true }
+        ]
+      };
+    }
+
+    // ---------- 第一張：個人名片 ----------
+    const bubbleProfile = {
+      type: 'bubble',
+      size: 'mega',
+      styles: {
+        header: { backgroundColor: '#000000' },
+        body: { backgroundColor: CARD },
+        footer: { backgroundColor: CARD }
+      },
+      header: {
+        type: 'box',
+        layout: 'vertical',
+        paddingAll: '18px',
+        contents: [
+          { type: 'image', url: BASE + '/img/logo.png', size: 'full', aspectRatio: '300:65', aspectMode: 'fit' },
+          { type: 'text', text: 'JIDEN WINDOW FILM', size: 'xxs', color: GOLD_DK, align: 'center', margin: 'md' }
+        ]
+      },
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        paddingAll: '20px',
+        spacing: 'md',
+        contents: [
+          { type: 'text', text: '黃偉哲', size: 'xxl', weight: 'bold', color: '#F2EFE6', align: 'center' },
+          { type: 'text', text: '傑登汽車大樓隔熱紙', size: 'sm', color: '#9A9384', align: 'center' },
+          { type: 'separator', color: '#2E2A20', margin: 'lg' },
+          {
+            type: 'box',
+            layout: 'vertical',
+            margin: 'lg',
+            spacing: 'sm',
+            contents: [
+              infoRow('手機', '0958-588-678'),
+              infoRow('市話', '03-322-3585'),
+              infoRow('LINE', '@jiden'),
+              infoRow('門市', '桃園市蘆竹區中正路14號')
+            ]
+          }
+        ]
+      },
+      footer: {
+        type: 'box',
+        layout: 'vertical',
+        spacing: 'sm',
+        paddingAll: '16px',
+        contents: [
+          btn('立即致電', LINKS.tel, true),
+          btn('加入 LINE 好友', LINKS.line),
+          btn('門市導航', LINKS.map)
+        ]
+      }
+    };
+
+    // ---------- 第二張：品牌與服務 ----------
+    const bubbleBrand = {
+      type: 'bubble',
+      size: 'mega',
+      styles: {
+        body: { backgroundColor: CARD },
+        footer: { backgroundColor: CARD }
+      },
+      hero: {
+        type: 'image',
+        url: BASE + '/img/hero-work.jpg',
+        size: 'full',
+        aspectRatio: '20:13',
+        aspectMode: 'cover'
+      },
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        paddingAll: '20px',
+        spacing: 'md',
+        contents: [
+          { type: 'text', text: '「能省就是賺錢」', size: 'lg', weight: 'bold', color: GOLD, align: 'center', wrap: true },
+          { type: 'text', text: '隔熱紙選對了　冷氣電費才省得下來', size: 'xs', color: '#9A9384', align: 'center', wrap: true },
+          { type: 'separator', color: '#2E2A20', margin: 'lg' },
+          {
+            type: 'box',
+            layout: 'vertical',
+            margin: 'lg',
+            spacing: 'sm',
+            contents: [
+              bullet('汽車隔熱紙　前擋、車身全車施工'),
+              bullet('大樓住宅隔熱紙　免費到府丈量估價'),
+              bullet('商辦玻璃工程　節能與隱私一次到位'),
+              bullet('車體包膜　原廠級工班細節處理')
+            ]
+          }
+        ]
+      },
+      footer: {
+        type: 'box',
+        layout: 'vertical',
+        spacing: 'sm',
+        paddingAll: '16px',
+        contents: [
+          btn('免費丈量估價', LINKS.tel, true),
+          btn('傑登官方網站', LINKS.web),
+          btn('Facebook 粉絲專頁', LINKS.fb)
+        ]
+      }
+    };
+
+    // ---------- 第三張：門市與社群 ----------
+    const bubbleStore = {
+      type: 'bubble',
+      size: 'mega',
+      styles: {
+        body: { backgroundColor: CARD },
+        footer: { backgroundColor: CARD }
+      },
+      hero: {
+        type: 'image',
+        url: BASE + '/img/hero-building.jpg',
+        size: 'full',
+        aspectRatio: '20:13',
+        aspectMode: 'cover'
+      },
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        paddingAll: '20px',
+        spacing: 'md',
+        contents: [
+          { type: 'text', text: '蘆竹一店', size: 'lg', weight: 'bold', color: '#F2EFE6', align: 'center' },
+          { type: 'text', text: '桃園市蘆竹區中正路14號　肯德基旁', size: 'xs', color: '#9A9384', align: 'center', wrap: true },
+          { type: 'separator', color: '#2E2A20', margin: 'lg' },
+          {
+            type: 'box',
+            layout: 'vertical',
+            margin: 'lg',
+            spacing: 'sm',
+            contents: [
+              infoRow('服務', '桃園　蘆竹　南崁　新竹　北部地區'),
+              infoRow('店電話', '03-322-3585'),
+              infoRow('信箱', 'jiden0958588678@gmail.com')
+            ]
+          }
+        ]
+      },
+      footer: {
+        type: 'box',
+        layout: 'vertical',
+        spacing: 'sm',
+        paddingAll: '16px',
+        contents: [
+          btn('Google 導航前往', LINKS.map, true),
+          btn('TikTok 影音頻道', LINKS.tiktok),
+          btn('撥打門市電話', LINKS.telShop)
+        ]
+      }
+    };
+
+    const flexMessage = {
+      type: 'flex',
+      altText: '黃偉哲｜傑登汽車大樓隔熱紙　電子名片',
+      contents: {
+        type: 'carousel',
+        contents: [bubbleProfile, bubbleBrand, bubbleStore]
+      }
+    };
+
+    // ---------- LIFF ----------
+    const btnShare = document.getElementById('btnShare');
+    const statusEl = document.getElementById('status');
+
+    function setStatus(msg, type) {
+      statusEl.textContent = msg || '';
+      statusEl.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    async function main() {
+      try {
+        if (!LIFF_ID || LIFF_ID.includes('YOUR_LIFF')) {
+          setStatus('尚未設定 LIFF ID，請先於 LINE Developers 建立 LIFF App', 'error');
+          btnShare.textContent = '尚未設定 LIFF ID';
+          return;
+        }
+
+        setStatus('正在初始化 LIFF...');
+        await liff.init({ liffId: LIFF_ID });
+
+        if (!liff.isLoggedIn()) {
+          setStatus('請先登入 LINE');
+          liff.login();
+          return;
+        }
+
+        if (!liff.isApiAvailable('shareTargetPicker')) {
+          setStatus('此環境不支援分享功能，請在 LINE App 內開啟', 'error');
+          btnShare.textContent = '請在 LINE 中開啟';
+          return;
+        }
+
+        btnShare.disabled = false;
+        btnShare.textContent = '分享我的電子名片';
+        setStatus('');
+      } catch (err) {
+        setStatus('LIFF 初始化失敗: ' + err.message, 'error');
+        btnShare.textContent = '初始化失敗';
+      }
+    }
+
+    btnShare.addEventListener('click', async () => {
+      try {
+        btnShare.disabled = true;
+        setStatus('開啟分享清單...');
+        const result = await liff.shareTargetPicker([flexMessage]);
+        if (result) {
+          setStatus('名片已送出', 'success');
+        } else {
+          setStatus('已取消分享');
+        }
+      } catch (err) {
+        setStatus('分享失敗: ' + err.message, 'error');
+      } finally {
+        btnShare.disabled = false;
+        btnShare.textContent = '分享我的電子名片';
+      }
+    });
+
+    main();
+  </script>
+</body>
+</html>
