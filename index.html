@@ -217,7 +217,8 @@
       web:      'https://www.jiden.com.tw/',
       fb:       'https://www.facebook.com/jiden3223585/',
       tiktok:   'https://www.tiktok.com/@jiden3223585',
-      map:      'https://goo.gl/maps/krXDY48M5kM4hsaa8'
+      map:      'https://goo.gl/maps/krXDY48M5kM4hsaa8',
+      video:    'https://dennis821102.github.io/jiden-namecard/img/brand-video.mp4'
     };
 
     const GOLD = '#E5B027';
@@ -310,7 +311,6 @@
         paddingAll: '16px',
         contents: [
           btn('立即致電', LINKS.tel, true),
-          btn('加入 LINE 好友', LINKS.line),
           btn('門市導航', LINKS.map)
         ]
       }
@@ -326,10 +326,11 @@
       },
       hero: {
         type: 'image',
-        url: BASE + '/img/hero-work.jpg',
+        url: BASE + '/img/video-preview.jpg',
         size: 'full',
-        aspectRatio: '20:13',
-        aspectMode: 'cover'
+        aspectRatio: '9:16',
+        aspectMode: 'cover',
+        action: { type: 'uri', label: '播放品牌影片', uri: LINKS.video }
       },
       body: {
         type: 'box',
@@ -410,9 +411,54 @@
         spacing: 'sm',
         paddingAll: '16px',
         contents: [
-          btn('Google 導航前往', LINKS.map, true),
+          btn('加入 LINE 好友', LINKS.line, true),
           btn('TikTok 影音頻道', LINKS.tiktok),
           btn('撥打門市電話', LINKS.telShop)
+        ]
+      }
+    };
+
+    // ---------- 第四張：品牌影片（必須獨立成一則訊息）----------
+    // LINE 規定：video 只能放在 hero，且該 bubble 不能是 carousel 的子元素，
+    // 所以影片卡片得跟名片分開送，兩則一起在同一次分享中發出。
+    const bubbleVideo = {
+      type: 'bubble',
+      size: 'mega',
+      styles: {
+        body: { backgroundColor: CARD },
+        footer: { backgroundColor: CARD }
+      },
+      hero: {
+        type: 'video',
+        url: LINKS.video,
+        previewUrl: BASE + '/img/video-preview.jpg',
+        aspectRatio: '9:16',
+        altContent: {
+          type: 'image',
+          url: BASE + '/img/video-preview.jpg',
+          size: 'full',
+          aspectRatio: '9:16',
+          aspectMode: 'cover'
+        }
+      },
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        paddingAll: '20px',
+        spacing: 'sm',
+        contents: [
+          { type: 'text', text: '傑登品牌影片', size: 'lg', weight: 'bold', color: '#F2EFE6', align: 'center' },
+          { type: 'text', text: '看施工現場　看成品差別', size: 'xs', color: '#9A9384', align: 'center', wrap: true }
+        ]
+      },
+      footer: {
+        type: 'box',
+        layout: 'vertical',
+        spacing: 'sm',
+        paddingAll: '16px',
+        contents: [
+          btn('免費丈量估價', LINKS.tel, true),
+          btn('傑登官方網站', LINKS.web)
         ]
       }
     };
@@ -424,6 +470,12 @@
         type: 'carousel',
         contents: [bubbleProfile, bubbleBrand, bubbleStore]
       }
+    };
+
+    const videoMessage = {
+      type: 'flex',
+      altText: '傑登汽車大樓隔熱紙　品牌影片',
+      contents: bubbleVideo
     };
 
     // ---------- LIFF ----------
@@ -471,7 +523,7 @@
       try {
         btnShare.disabled = true;
         setStatus('開啟分享清單...');
-        const result = await liff.shareTargetPicker([flexMessage]);
+        const result = await liff.shareTargetPicker([flexMessage, videoMessage]);
         if (result) {
           setStatus('名片已送出', 'success');
         } else {
