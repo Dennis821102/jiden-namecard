@@ -311,7 +311,8 @@
         paddingAll: '16px',
         contents: [
           btn('立即致電', LINKS.tel, true),
-          btn('門市導航', LINKS.map)
+          btn('Google 導航前往', LINKS.map),
+          btn('傑登官方網站', LINKS.web)
         ]
       }
     };
@@ -326,9 +327,9 @@
       },
       hero: {
         type: 'image',
-        url: BASE + '/img/video-preview.jpg',
+        url: BASE + '/img/video-cover-wide.jpg',
         size: 'full',
-        aspectRatio: '9:16',
+        aspectRatio: '4:3',
         aspectMode: 'cover',
         action: { type: 'uri', label: '播放品牌影片', uri: LINKS.video }
       },
@@ -362,7 +363,7 @@
         paddingAll: '16px',
         contents: [
           btn('免費丈量估價', LINKS.tel, true),
-          btn('傑登官方網站', LINKS.web),
+          btn('門市導航', LINKS.map),
           btn('Facebook 粉絲專頁', LINKS.fb)
         ]
       }
